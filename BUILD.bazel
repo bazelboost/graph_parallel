@@ -1,0 +1,30 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+_public_hdrs = [
+    "include/boost/*.hpp",
+    "include/boost/graph/*.hpp",
+    "include/boost/graph/distributed/*.hpp",
+    "include/boost/graph/distributed/adjlist*.hpp",
+    "include/boost/graph/parallel/*.hpp",
+]
+
+cc_library(
+    name = "graph_parallel_internal",
+    hdrs = glob(["include/boost/**/*.hpp"], exclude = _public_hdrs),
+)
+
+cc_library(
+    name = "graph_parallel",
+    visibility = ["//visibility:public"],
+    includes = ["include"],
+    hdrs = glob(_public_hdrs),
+    srcs = glob(["src/*.cpp"]),
+    deps = [
+        ":graph_parallel_internal",
+        "@boost//graph",
+        "@boost//assert",
+        "@boost//optional",
+        "@boost//smart_ptr",
+        "@boost//function",
+    ],
+)
